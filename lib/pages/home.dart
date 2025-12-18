@@ -138,7 +138,7 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(width: 10.0),
                       Text(
-                        "Ann Perera",
+                        "A.S Perera",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,

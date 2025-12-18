@@ -85,7 +85,7 @@ flutter:
         - asset: assets/fonts/Caveat-SemiBold.ttf
     - family: Karla
       fonts:
-        - asset: assets/fonts/Karla_Bold.ttf
+        - asset: assets/fonts/Karla-Bold.ttf
           weight: 700
   
   # For details regarding fonts from package dependencies,
