@@ -30,14 +30,44 @@ class _HomeState extends State<Home> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.only(top: 40.0, right: 20.0),
+                  padding: const EdgeInsets.only(
+                    top: 40.0,
+                    left: 20.0,
+                    right: 20.0,
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Material(
-                        elevation: 3.0,
-                        borderRadius: BorderRadius.circular(60),
+                      Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Image.asset(
+                          "assets/images/world_location.png",
+                          height: 30,
+                          width: 30,
+                        ),
+                      ),
 
+                      const Spacer(),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          onPressed: () {},
+                        ),
+                      ),
+
+                      const SizedBox(width: 15),
+
+                      Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(60),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(60),
                           child: Image.asset(
@@ -51,6 +81,7 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.only(top: 110.0, left: 20.0),
                   child: Column(
@@ -120,36 +151,96 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: 40.0),
             Container(
-              decoration: BoxDecoration(color: Colors.white),
-              margin: EdgeInsets.only(left: 30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+              margin: EdgeInsets.only(left: 30.0, right: 35.0),
+
+              child: Material(
+                elevation: 3.0,
+                borderRadius: BorderRadius.circular(15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: Image.asset(
-                          'assets/images/boy.jpg',
-                          height: 50,
-                          width: 50,
-                          fit: BoxFit.cover,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, left: 10.0),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.asset(
+                                'assets/images/boy.jpg',
+                                height: 50,
+                                width: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(width: 10.0),
+                            Text(
+                              "A.S Perera",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Karla',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 10.0),
-                      Text(
-                        "A.S Perera",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Karla',
+                      SizedBox(height: 10.0),
+                      Image.asset('assets/images/img02.jpg'),
+                      SizedBox(height: 5.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on, color: Colors.blue),
+                            Text(
+                              "Sigiriya, Sri Lanka",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Karla',
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
+                      SizedBox(height: 5.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          "one of the best preserved examples of ancient urban planning",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Karla',
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.favorite_border),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.comment_outlined),
+                            onPressed: () {},
+                          ),
+                          IconButton(icon: Icon(Icons.share), onPressed: () {}),
+                        ],
                       ),
                     ],
                   ),
-                  Image.asset('assets/images/img02.jpg'),
-                ],
+                ),
               ),
             ),
           ],
