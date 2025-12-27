@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "944661200966",
+    "project_id": "travelers-c40ac",
+    "storage_bucket": "travelers-c40ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:944661200966:android:3d0d72ce6995e5a13f0a47",
+        "android_client_info": {
+          "package_name": "com.example.travel_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJytehukiCBbEHEObyX1cXP9K0lmmoA_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
