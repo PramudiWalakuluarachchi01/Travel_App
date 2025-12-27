@@ -1,15 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/services/database.dart';
+import 'package:travel_app/services/shared_pref.dart';
 
+import 'home.dart';
 import 'sign_up.dart';
 
 class SignInUI extends StatefulWidget {
-  const SignInUI({super.key});
+  SignInUI({super.key});
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   State<SignInUI> createState() => _SignInUIState();
 }
 
 class _SignInUIState extends State<SignInUI> {
+  String email = "", password = "", myname = "", myid = '', myimage = '';
+
   bool _obscurePassword = true;
 
   @override
@@ -25,22 +36,21 @@ class _SignInUIState extends State<SignInUI> {
               left: 0,
               right: 0,
               child: Opacity(
-                opacity: 0.35, // adjust opacity here (0.0 - 1.0)
+                opacity: 0.35,
                 child: Image.asset(
-                  'assets/images/travel.jpg', // your image path
+                  'assets/images/travel.jpg',
                   height: 600,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
 
-            // Main content
             SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 30), // space for image
+                  const SizedBox(height: 30),
 
                   const Text(
                     'Welcome Back!',
@@ -67,11 +77,14 @@ class _SignInUIState extends State<SignInUI> {
 
                   const SizedBox(height: 370),
 
-                  _buildTextField(label: 'Email', icon: Icons.email),
-
+                  _buildTextField(
+                    controller: widget._emailController,
+                    label: 'Email',
+                    icon: Icons.email,
+                  ),
                   const SizedBox(height: 16),
-
                   _buildPasswordField(
+                    controller: widget._passwordController,
                     label: 'Password',
                     icon: Icons.lock,
                     obscureText: _obscurePassword,
@@ -88,7 +101,7 @@ class _SignInUIState extends State<SignInUI> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // Forgot password UI only
+                        // TODO: Add Forgot Password UI here
                       },
                       child: const Text(
                         'Forgot password?',
@@ -103,7 +116,74 @@ class _SignInUIState extends State<SignInUI> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        String email = widget._emailController.text.trim();
+                        String password = widget._passwordController.text
+                            .trim();
+
+                        if (email.isEmpty || password.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please fill all fields'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        try {
+                          await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                email: email,
+                                password: password,
+                              );
+                          QuerySnapshot snapshot = await DatabaseMethods()
+                              .getUserbyEmail(email);
+
+                          myname = snapshot.docs[0]['Name'];
+                          myid = snapshot.docs[0]['Id'];
+                          myimage = snapshot.docs[0]['Image'];
+
+                          final prefs = await SharedPreferences.getInstance();
+
+                          await prefs.setString(
+                            SharedPreferenceHelper.userImageKey,
+                            myimage,
+                          );
+                          await prefs.setString(
+                            SharedPreferenceHelper.userNameKey,
+                            myname,
+                          );
+                          await prefs.setString(
+                            SharedPreferenceHelper.userEmailKey,
+                            email,
+                          );
+                          await prefs.setString(
+                            SharedPreferenceHelper.userIdKey,
+                            myid,
+                          );
+
+                          // Navigate to Home
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(),
+                            ),
+                          );
+                        } on FirebaseAuthException catch (e) {
+                          String message = '';
+                          if (e.code == 'user-not-found') {
+                            message = 'No user found for this email.';
+                          } else if (e.code == 'wrong-password') {
+                            message = 'Incorrect password.';
+                          } else {
+                            message = e.message.toString();
+                          }
+
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(message)));
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
@@ -138,7 +218,7 @@ class _SignInUIState extends State<SignInUI> {
                                 ),
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) =>
-                                         SignUpUI(),
+                                        SignUpUI(),
                                 transitionsBuilder:
                                     (
                                       context,
@@ -146,10 +226,7 @@ class _SignInUIState extends State<SignInUI> {
                                       secondaryAnimation,
                                       child,
                                     ) {
-                                      const begin = Offset(
-                                        1.0,
-                                        0.0,
-                                      ); // from right
+                                      const begin = Offset(1.0, 0.0);
                                       const end = Offset.zero;
                                       const curve = Curves.easeInOut;
 
@@ -186,8 +263,13 @@ class _SignInUIState extends State<SignInUI> {
     );
   }
 
-  Widget _buildTextField({required String label, required IconData icon}) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+  }) {
     return TextField(
+      controller: controller,
       cursorColor: Colors.white,
       decoration: InputDecoration(
         labelText: label,
@@ -208,12 +290,14 @@ class _SignInUIState extends State<SignInUI> {
   }
 
   Widget _buildPasswordField({
+    required TextEditingController controller,
     required String label,
     required IconData icon,
     required bool obscureText,
     required VoidCallback onToggle,
   }) {
     return TextField(
+      controller: controller,
       cursorColor: Colors.white,
       obscureText: obscureText,
       decoration: InputDecoration(

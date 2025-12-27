@@ -1,12 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_app/pages/home.dart';
 import 'package:travel_app/pages/sign_in.dart';
 import 'package:travel_app/pages/sign_up.dart';
-import 'package:travel_app/pages/top_places.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
@@ -22,9 +19,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       initialRoute: '/signin',
-       routes: {
-        '/signin': (context) => const SignInUI(),
-        '/signup': (context) =>  SignUpUI(),
+      routes: {
+        '/signin': (context) => SignInUI(),
+        '/signup': (context) => SignUpUI(),
       },
       theme: ThemeData(
         // This is the theme of your application.
@@ -48,8 +45,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

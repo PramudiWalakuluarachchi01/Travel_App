@@ -174,7 +174,7 @@ class _SignUpUIState extends State<SignUpUI> {
                                   milliseconds: 400,
                                 ),
                                 pageBuilder: (_, animation, __) =>
-                                    const SignInUI(),
+                                     SignInUI(),
                                 transitionsBuilder: (_, animation, __, child) {
                                   final tween = Tween(
                                     begin: const Offset(-1, 0),
