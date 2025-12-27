@@ -173,8 +173,7 @@ class _SignUpUIState extends State<SignUpUI> {
                                 transitionDuration: const Duration(
                                   milliseconds: 400,
                                 ),
-                                pageBuilder: (_, animation, __) =>
-                                     SignInUI(),
+                                pageBuilder: (_, animation, __) => SignInUI(),
                                 transitionsBuilder: (_, animation, __, child) {
                                   final tween = Tween(
                                     begin: const Offset(-1, 0),
@@ -302,6 +301,8 @@ class _SignUpUIState extends State<SignUpUI> {
   }) {
     return TextField(
       controller: controller,
+      style: TextStyle(color: Colors.white),
+
       cursorColor: Colors.white,
       decoration: InputDecoration(
         labelText: label,
@@ -330,6 +331,8 @@ class _SignUpUIState extends State<SignUpUI> {
   }) {
     return TextField(
       controller: controller,
+      style: TextStyle(color: Colors.white),
+
       cursorColor: Colors.white,
       obscureText: obscureText,
       decoration: InputDecoration(

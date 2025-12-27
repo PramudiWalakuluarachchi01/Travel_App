@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_app/pages/add_page.dart';
 import 'package:travel_app/pages/sign_in.dart';
 import 'package:travel_app/pages/sign_up.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/signin',
+      // initialRoute: '/signin',
       routes: {
         '/signin': (context) => SignInUI(),
         '/signup': (context) => SignUpUI(),
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SignInUI(),
+      home: AddPage(),
     );
   }
 }

@@ -139,9 +139,20 @@ class _SignInUIState extends State<SignInUI> {
                           QuerySnapshot snapshot = await DatabaseMethods()
                               .getUserbyEmail(email);
 
-                          myname = snapshot.docs[0]['Name'];
-                          myid = snapshot.docs[0]['Id'];
-                          myimage = snapshot.docs[0]['Image'];
+                          if (snapshot.docs.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("User data not found"),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final userData = snapshot.docs.first;
+
+                          myname = userData['Name'] ?? '';
+                          myid = userData['Id'] ?? '';
+                          myimage = userData['Image'] ?? '';
 
                           final prefs = await SharedPreferences.getInstance();
 
@@ -270,6 +281,7 @@ class _SignInUIState extends State<SignInUI> {
   }) {
     return TextField(
       controller: controller,
+      style: TextStyle(color: Colors.white),
       cursorColor: Colors.white,
       decoration: InputDecoration(
         labelText: label,
@@ -298,6 +310,8 @@ class _SignInUIState extends State<SignInUI> {
   }) {
     return TextField(
       controller: controller,
+      style: TextStyle(color: Colors.white),
+
       cursorColor: Colors.white,
       obscureText: obscureText,
       decoration: InputDecoration(
