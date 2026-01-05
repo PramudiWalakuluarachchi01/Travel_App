@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_app/pages/add_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -59,7 +60,14 @@ class _HomeState extends State<Home> {
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.add, color: Colors.white),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>  AddPage(),
+                              ),
+                            );
+                          },
                         ),
                       ),
 
