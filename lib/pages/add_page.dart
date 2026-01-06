@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:random_string/random_string.dart';
 import 'package:travel_app/pages/home.dart';
+import 'package:travel_app/services/shared_pref.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -14,16 +17,43 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
   final ImagePicker _picker = ImagePicker();
   File? selectedImage;
+  String? name, image;
+  late TextEditingController placeController;
+  late TextEditingController cityController;
+  late TextEditingController captionController;
 
-  Future getImage() async {
-    var image = await _picker.pickImage(source: ImageSource.gallery);
-
-    selectedImage = File(image!.path);
+  getthesharedpref() async {
+    name = await SharedPreferenceHelper().getUserName();
+    image = await SharedPreferenceHelper().getUserImage();
     setState(() {});
   }
 
-  TextEditingController placeController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  Future getImage() async {
+    final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage == null) return;
+
+    setState(() {
+      selectedImage = File(pickedImage.path);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getthesharedpref();
+    placeController = TextEditingController();
+    cityController = TextEditingController();
+    captionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    placeController.dispose();
+    cityController.dispose();
+    captionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,24 +103,40 @@ class _AddPageState extends State<AddPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black54,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 100,
-                            color: Colors.grey,
-                          ),
-                        ),
+                      GestureDetector(
+                        onTap: getImage,
+                        child: selectedImage != null
+                            ? Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    selectedImage!,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Container(
+                                  height: 150,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.black54,
+                                      width: 2.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 100,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
                       ),
+
                       SizedBox(height: 15),
                       Text(
                         'Place Name',
@@ -104,6 +150,7 @@ class _AddPageState extends State<AddPage> {
                         padding: EdgeInsets.only(left: 1, right: 10),
                         margin: EdgeInsets.only(top: 10, bottom: 20),
                         child: TextField(
+                          controller: placeController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -136,6 +183,7 @@ class _AddPageState extends State<AddPage> {
                         padding: EdgeInsets.only(left: 1, right: 10),
                         margin: EdgeInsets.only(top: 10, bottom: 20),
                         child: TextField(
+                          controller: cityController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -168,6 +216,7 @@ class _AddPageState extends State<AddPage> {
                         padding: EdgeInsets.only(left: 1, right: 10),
                         margin: EdgeInsets.only(top: 10, bottom: 20),
                         child: TextField(
+                          controller: captionController,
                           maxLines: 6,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -188,25 +237,54 @@ class _AddPageState extends State<AddPage> {
                           ),
                         ),
                       ),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 10,
+                      GestureDetector(
+                        child: Center(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              {
+                                if (selectedImage != null &&
+                                    placeController.text != "" &&
+                                    cityController.text != "" &&
+                                    captionController.text != "") {}
+                                String addId = randomAlphaNumeric(10);
+
+                                Reference firebaseStorageRef = FirebaseStorage
+                                    .instance
+                                    .ref()
+                                    .child('blogImage')
+                                    .child(addId);
+
+                                final UploadTask task = firebaseStorageRef
+                                    .putFile(selectedImage!);
+
+                                var downloadUrl = await (await task).ref
+                                    .getDownloadURL();
+
+                                Map<String, dynamic> addPost = {
+                                  "place": placeController.text,
+                                  "city": cityController.text,
+                                  "caption": captionController.text,
+                                  "img": downloadUrl.toString(),
+                                };
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 40,
+                                vertical: 10,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          child: Text(
-                            'Post',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            child: Text(
+                              'Post',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
