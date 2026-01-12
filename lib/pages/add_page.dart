@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
 import 'package:travel_app/pages/home.dart';
+import 'package:travel_app/services/database.dart';
 import 'package:travel_app/services/shared_pref.dart';
 
 class AddPage extends StatefulWidget {
@@ -118,20 +118,25 @@ class _AddPageState extends State<AddPage> {
                                 ),
                               )
                             : Center(
-                                child: Container(
-                                  height: 150,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.black54,
-                                      width: 2.0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    getImage();
+                                  },
+                                  child: Container(
+                                    height: 150,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.black54,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    size: 100,
-                                    color: Colors.grey,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      size: 100,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -241,51 +246,43 @@ class _AddPageState extends State<AddPage> {
                         child: Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              {
-                                if (selectedImage != null &&
-                                    placeController.text != "" &&
-                                    cityController.text != "" &&
-                                    captionController.text != "") {}
-                                String addId = randomAlphaNumeric(10);
-
-                                Reference firebaseStorageRef = FirebaseStorage
-                                    .instance
-                                    .ref()
-                                    .child('blogImage')
-                                    .child(addId);
-
-                                final UploadTask task = firebaseStorageRef
-                                    .putFile(selectedImage!);
-
-                                var downloadUrl = await (await task).ref
-                                    .getDownloadURL();
-
-                                Map<String, dynamic> addPost = {
-                                  "place": placeController.text,
-                                  "city": cityController.text,
-                                  "caption": captionController.text,
-                                  "img": downloadUrl.toString(),
-                                };
+                              if (placeController.text.isEmpty ||
+                                  cityController.text.isEmpty ||
+                                  captionController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Please fill all fields"),
+                                  ),
+                                );
+                                return;
                               }
+
+                              String addId = randomAlphaNumeric(10);
+
+                              Map<String, dynamic> addPost = {
+                                "Place": placeController.text,
+                                "City": cityController.text,
+                                "Caption": captionController.text,
+                                "Image": null, // ❌ No Firebase Storage
+                                "UserName": name,
+                                "UserImage": image,
+                                "createdAt": FieldValue.serverTimestamp(),
+                              };
+
+                              await DatabaseMethods().addPost(addPost, addId);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text(
+                                    "Post uploaded (without image)",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              );
+
+                              Navigator.pop(context);
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 40,
-                                vertical: 10,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Text(
-                              'Post',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
                           ),
                         ),
                       ),
