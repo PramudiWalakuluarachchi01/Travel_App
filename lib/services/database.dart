@@ -21,4 +21,10 @@ class DatabaseMethods {
         .doc(userId)
         .set(userInfoMap);
   }
+ Future<Stream<QuerySnapshot>> getPosts() async {
+    return await FirebaseFirestore.instance
+        .collection("Posts")
+        .snapshots();
+  }
+
 }

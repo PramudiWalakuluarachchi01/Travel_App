@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/pages/add_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:travel_app/services/database.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,6 +11,140 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Stream? postStream;
+
+  getontheload() async {
+    postStream = await DatabaseMethods().getPosts();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getontheload();
+    super.initState();
+  }
+
+  Widget allPosts() {
+    return StreamBuilder(
+      stream: postStream,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data.docs[index];
+                  return Container(
+                    margin: EdgeInsets.only(left: 30.0, right: 35.0),
+
+                    child: Material(
+                      elevation: 3.0,
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 10.0,
+                                left: 10.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(60),
+                                    child: Image.network(
+                                      ds["UserImage"],
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.0),
+                                  Text(
+                                    ds["UserName"],
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Karla',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10.0),
+                            Image.network(ds["Image"] ! null
+                            ? Image.network( ds["Image"],
+        height: 200,
+        width: double.infinity,
+        fit: BoxFit.cover,)),
+                            SizedBox(height: 5.0),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.blue),
+                                  Text(
+                                    ds["Place"] + ", " + ds["City"],
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Karla',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5.0),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: Text(
+                               ds["Caption"],
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Karla',
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.favorite_border),
+                                  onPressed: () {},
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.comment_outlined),
+                                  onPressed: () {},
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.share),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Container();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +200,7 @@ class _HomeState extends State<Home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>  AddPage(),
+                                builder: (context) => AddPage(),
                               ),
                             );
                           },
@@ -160,99 +294,7 @@ class _HomeState extends State<Home> {
               ],
             ),
             SizedBox(height: 40.0),
-            Container(
-              margin: EdgeInsets.only(left: 30.0, right: 35.0),
-
-              child: Material(
-                elevation: 3.0,
-                borderRadius: BorderRadius.circular(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 10.0),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child: Image.asset(
-                                'assets/images/boy.jpg',
-                                height: 50,
-                                width: 50,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            SizedBox(width: 10.0),
-                            Text(
-                              "A.S Perera",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Karla',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Image.asset('assets/images/img02.jpg'),
-                      SizedBox(height: 5.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on, color: Colors.blue),
-                            Text(
-                              "Sigiriya, Sri Lanka",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Karla',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "one of the best preserved examples of ancient urban planning",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Karla',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.favorite_border),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.comment_outlined),
-                            onPressed: () {},
-                          ),
-                          IconButton(icon: Icon(Icons.share), onPressed: () {}),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            allPosts(),
           ],
         ),
       ),

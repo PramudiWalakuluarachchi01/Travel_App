@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
@@ -245,13 +246,21 @@ class _AddPageState extends State<AddPage> {
                       GestureDetector(
                         child: Center(
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 50, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
                             onPressed: () async {
                               if (placeController.text.isEmpty ||
                                   cityController.text.isEmpty ||
                                   captionController.text.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text("Please fill all fields"),
+                                    content: Text("Please fill all fields", style: TextStyle(color: Colors.white),),
                                   ),
                                 );
                                 return;
@@ -283,6 +292,7 @@ class _AddPageState extends State<AddPage> {
 
                               Navigator.pop(context);
                             },
+                            child: Text("Post", style: TextStyle(color: Colors.white),),
                           ),
                         ),
                       ),
