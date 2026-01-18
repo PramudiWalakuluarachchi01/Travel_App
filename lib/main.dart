@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/pages/add_page.dart';
+import 'package:travel_app/pages/comment.dart';
+import 'package:travel_app/pages/home.dart';
 import 'package:travel_app/pages/sign_in.dart';
 import 'package:travel_app/pages/sign_up.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +45,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: AddPage(),
+      home: Home(),
     );
   }
 }

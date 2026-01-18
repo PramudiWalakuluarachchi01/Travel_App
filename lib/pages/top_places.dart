@@ -1,499 +1,127 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_app/pages/post_places.dart' as post_places;
+import 'package:travel_app/services/database.dart';
 
-class TopPlaces extends StatefulWidget {
+class TopPlaces extends StatelessWidget {
   const TopPlaces({super.key});
 
   @override
-  State<TopPlaces> createState() => _TopPlacesState();
-}
-
-class _TopPlacesState extends State<TopPlaces> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(top: 60, left: 1, right: 1),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                children: [
-                  Material(
-                    elevation: 3.0,
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_outlined,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width / 6),
-                  Text(
-                    'Top Places',
-                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 30),
-            Expanded(
-              child: Material(
-                elevation: 3.0,
-                child: Container(
-                  padding: EdgeInsets.only(top: 20, left: 35, right: 20),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                    ),
-                  ),
+      appBar: AppBar(
+        title: const Text("Top Places"),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: DatabaseMethods().getPosts(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                  width: MediaQuery.of(context).size.width,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Material(
-                              elevation: 3.0,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/images/italy.png',
-                                      height: 200,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 170),
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        66,
-                                        64,
-                                        64,
-                                      ).withOpacity(0.5),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'Italy',
-                                        style: TextStyle(
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            253,
-                                            253,
-                                            253,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  elevation: 3.0,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          'assets/images/japan.png',
-                                          height: 200,
-                                          width: 150,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 170),
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            66,
-                                            64,
-                                            64,
-                                          ).withOpacity(0.5),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'Japan',
-                                            style: TextStyle(
-                                              fontSize: 23,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color.fromARGB(
-                                                255,
-                                                253,
-                                                253,
-                                                253,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Row(
-                          children: [
-                            Material(
-                              elevation: 3.0,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/images/newzealand.jpg',
-                                      height: 200,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 170),
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        66,
-                                        64,
-                                        64,
-                                      ).withOpacity(0.5),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'New Zealand',
-                                        style: TextStyle(
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            253,
-                                            253,
-                                            253,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  elevation: 3.0,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          'assets/images/paris.jpg',
-                                          height: 200,
-                                          width: 150,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 170),
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            66,
-                                            64,
-                                            64,
-                                          ).withOpacity(0.5),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'Paris',
-                                            style: TextStyle(
-                                              fontSize: 23,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color.fromARGB(
-                                                255,
-                                                253,
-                                                253,
-                                                253,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Row(
-                          children: [
-                            Material(
-                              elevation: 3.0,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/images/s_korea.jpg',
-                                      height: 200,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 170),
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        66,
-                                        64,
-                                        64,
-                                      ).withOpacity(0.5),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'South Korea',
-                                        style: TextStyle(
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            253,
-                                            253,
-                                            253,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  elevation: 3.0,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          'assets/images/england.jpg',
-                                          height: 200,
-                                          width: 150,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 170),
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            66,
-                                            64,
-                                            64,
-                                          ).withOpacity(0.5),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'England',
-                                            style: TextStyle(
-                                              fontSize: 23,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color.fromARGB(
-                                                255,
-                                                253,
-                                                253,
-                                                253,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Row(
-                          children: [
-                            Material(
-                              elevation: 3.0,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/images/germany.jpg',
-                                      height: 200,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 170),
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        66,
-                                        64,
-                                        64,
-                                      ).withOpacity(0.5),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'Germany',
-                                        style: TextStyle(
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            253,
-                                            253,
-                                            253,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  elevation: 3.0,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          'assets/images/canada.png',
-                                          height: 200,
-                                          width: 150,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 170),
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            66,
-                                            64,
-                                            64,
-                                          ).withOpacity(0.5),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'Canada',
-                                            style: TextStyle(
-                                              fontSize: 23,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color.fromARGB(
-                                                255,
-                                                253,
-                                                253,
-                                                253,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 50),
-                      ],
-                    ),
-                  ),
-                ),
+            // Extract unique cities and one post per city for image
+            Set<String> cities = {};
+            List<DocumentSnapshot> cityPosts = [];
+
+            for (var ds in snapshot.data!.docs) {
+              try {
+                String city = ds.get("City") ?? "";
+                if (city.isNotEmpty && !cities.contains(city)) {
+                  cities.add(city);
+                  cityPosts.add(ds); // store one post per city for image
+                }
+              } catch (e) {}
+            }
+
+            if (cityPosts.isEmpty) {
+              return const Center(child: Text("No places yet"));
+            }
+
+            return GridView.builder(
+              itemCount: cityPosts.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
               ),
-            ),
-          ],
+              itemBuilder: (context, index) {
+                var ds = cityPosts[index];
+
+                String cityName = "";
+                String postImage = "";
+
+                try {
+                  cityName = ds.get("City") ?? "";
+                } catch (e) {}
+
+                try {
+                  postImage = ds.get("Image") ?? "";
+                } catch (e) {}
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            post_places.PostPlaces(cityName: cityName),
+                      ),
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: postImage.isNotEmpty
+                            ? Image.network(
+                                postImage,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                            : Container(
+                                color: Colors.grey[300],
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 50,
+                                ),
+                              ),
+                      ),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(0.6),
+                              Colors.transparent,
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
+                        ),
+                        child: Text(
+                          cityName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );

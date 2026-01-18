@@ -15,16 +15,53 @@ class DatabaseMethods {
         .get();
   }
 
-  Future addPost(Map<String, dynamic> userInfoMap, String userId) async {
-    return await FirebaseFirestore.instance
+  Future<void> addPost(Map<String, dynamic> postData, String postId) async {
+    await FirebaseFirestore.instance
         .collection("Posts")
-        .doc(userId)
-        .set(userInfoMap);
+        .doc(postId)
+        .set(postData);
   }
- Future<Stream<QuerySnapshot>> getPosts() async {
-    return await FirebaseFirestore.instance
+
+  Future<void> likePost(String postId, String userId) async {
+    await FirebaseFirestore.instance.collection("Posts").doc(postId).update({
+      'Likes': FieldValue.arrayUnion([userId]),
+    });
+  }
+
+  Future<void> unlikePost(String postId, String userId) async {
+    await FirebaseFirestore.instance.collection("Posts").doc(postId).update({
+      'Likes': FieldValue.arrayRemove([userId]),
+    });
+  }
+
+  Stream<QuerySnapshot> getPosts() {
+    return FirebaseFirestore.instance
         .collection("Posts")
+        .orderBy("Time", descending: true)
         .snapshots();
   }
 
+  Future addComment(Map<String, dynamic> userInfoMap, String userId) async {
+    return await FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(userId)
+        .collection("comments")
+        .add(userInfoMap);
+  }
+
+  Stream<QuerySnapshot> getComments(String postId) {
+    return FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(postId)
+        .collection("comments")
+        .orderBy("Time", descending: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getPostsPlace(String place) {
+    return FirebaseFirestore.instance
+        .collection("Posts")
+        .where("CityName", isEqualTo: place)
+        .snapshots();
+  }
 }

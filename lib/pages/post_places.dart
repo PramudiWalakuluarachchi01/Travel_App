@@ -1,29 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_app/pages/add_page.dart';
 import 'package:travel_app/pages/comment.dart';
-import 'package:travel_app/pages/post_places.dart' as post_places;
-import 'package:travel_app/pages/top_places.dart' as top_places;
 import 'package:travel_app/services/database.dart';
 import 'package:travel_app/services/shared_pref.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class PostPlaces extends StatefulWidget {
+  final String cityName;
+
+  const PostPlaces({super.key, required this.cityName});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<PostPlaces> createState() => _PostPlacesState();
 }
 
-class _HomeState extends State<Home> {
+class _PostPlacesState extends State<PostPlaces> {
   String? name, image, id;
   Stream<QuerySnapshot>? postStream;
-  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     getUserData();
-    postStream = DatabaseMethods().getPosts();
+    postStream = DatabaseMethods().getPostsPlace(widget.cityName);
   }
 
   getUserData() async {
@@ -42,12 +40,10 @@ class _HomeState extends State<Home> {
         }
 
         if (snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No posts yet"));
+          return const Center(child: Text("No posts for this city"));
         }
 
         return ListView.builder(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             DocumentSnapshot ds = snapshot.data!.docs[index];
@@ -228,9 +224,7 @@ class _HomeState extends State<Home> {
                             onPressed: () {},
                           ),
                           IconButton(
-                            icon: const Icon(Icons.share),
-                            onPressed: () {},
-                          ),
+                              icon: const Icon(Icons.share), onPressed: () {}),
                         ],
                       ),
                     ],
@@ -247,128 +241,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Top Banner
-          Stack(
-            children: [
-              Image.asset(
-                'assets/images/img01.jpg',
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 3,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 3,
-                color: Colors.black.withOpacity(0.65),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 40.0,
-                  left: 20.0,
-                  right: 20.0,
-                ),
-                child: Row(
-                  children: [
-                    // 🌍 WORLD ICON → TopPlaces
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const top_places.TopPlaces(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Image.asset(
-                          "assets/images/world_location.png",
-                          height: 30,
-                          width: 30,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-
-                    // ADD POST BUTTON
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const AddPage()),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-
-                    // PROFILE IMAGE
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(60),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: Image.asset(
-                          "assets/images/boy.jpg",
-                          height: 50,
-                          width: 50,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // 🔍 SEARCH BAR
-              Positioned(
-                bottom: 10,
-                left: 20,
-                right: 20,
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: "Search city...",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.9),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    if (value.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              post_places.PostPlaces(cityName: value),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-          Expanded(child: allPosts()),
-        ],
+      appBar: AppBar(
+        title: Text(widget.cityName),
+        centerTitle: true,
       ),
+      body: allPosts(),
     );
   }
 }
